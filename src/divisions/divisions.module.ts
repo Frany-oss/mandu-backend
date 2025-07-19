@@ -3,10 +3,12 @@ import { DivisionsController } from './divisions.controller';
 import { DivisionsService } from './divisions.service';
 import { Division } from './divisions.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Subdivision } from 'src/subdivisions/subdivisions.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Division]), // Esto es CRUCIAL - registra el repositorio
+    TypeOrmModule.forFeature([Division]),
+    TypeOrmModule.forFeature([Subdivision]),
   ],
   controllers: [DivisionsController],
   providers: [DivisionsService],

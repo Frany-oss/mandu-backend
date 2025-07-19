@@ -15,6 +15,7 @@ import {
   generateRandomCollaborators,
   generateRandomLevel,
 } from 'src/shared/global.functions';
+import { Subdivision } from 'src/subdivisions/subdivisions.entity';
 
 @Injectable()
 export class DivisionsService {
@@ -81,12 +82,22 @@ export class DivisionsService {
     return division;
   }
 
-  async findSubdivisiones(divisionId: number): Promise<Division[]> {
-    return await this.divisionRepository.find({
-      where: { divisionSuperiorId: divisionId },
-      relations: ['subdivisiones'],
-      order: { nombre: 'ASC' },
+  async findSubdivisions(divisionId: number): Promise<Subdivision[]> {
+    const division = await this.divisionRepository.findOne({
+      where: { id: divisionId },
     });
+
+    if (!division) {
+      throw new NotFoundException('División no encontrada');
+    }
+
+    // Buscar todas las subdivisiones de la división especificada usando la relación
+    const divisionWithSubdivisions = await this.divisionRepository.findOne({
+      where: { id: divisionId },
+      relations: ['subdivisions'],
+    });
+
+    return divisionWithSubdivisions?.subdivisions || [];
   }
 
   async update(
@@ -149,16 +160,13 @@ export class DivisionsService {
   async remove(id: number): Promise<void> {
     const division = await this.findOne(id);
 
-    // Verificar si tiene subdivisiones
-    const subdivisiones = await this.divisionRepository.count({
-      where: { divisionSuperiorId: id },
-    });
-
-    if (subdivisiones > 0) {
+    if (division.cantidadSubdivisiones > 0) {
       throw new BadRequestException(
         'No se puede eliminar una división que tiene subdivisiones. Elimine o reasigne las subdivisiones primero.',
       );
     }
+
+    // TODO: Eliminate all subdivisions if exist
 
     await this.divisionRepository.remove(division);
   }

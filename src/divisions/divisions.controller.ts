@@ -49,7 +49,7 @@ export class DivisionsController {
     return await this.divisionService.findOne(id);
   }
 
-  @Get(':id/subdivisiones')
+  @Get(':id/subdivisions')
   @ApiOperation({ summary: 'Obtener las subdivisiones de una división' })
   @ApiParam({ name: 'id', description: 'ID de la división padre' })
   @ApiResponse({
@@ -57,7 +57,7 @@ export class DivisionsController {
     description: 'Subdivisiones obtenidas exitosamente',
   })
   async findSubdivisiones(@Param('id', ParseIntPipe) id: number) {
-    return await this.divisionService.findSubdivisiones(id);
+    return await this.divisionService.findSubdivisions(id);
   }
 
   @Get(':id/jerarquia-completa')
