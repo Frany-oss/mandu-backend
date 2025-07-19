@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { IsString, IsOptional, MaxLength } from 'class-validator';
+import { IsString, IsOptional, IsInt, Min, MaxLength } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class CreateDivisionDto {
@@ -10,8 +10,9 @@ export class CreateDivisionDto {
   nombre: string;
 
   @IsOptional()
-  @IsString({ message: 'La división superior debe ser un nombre correcto' })
-  divisionSuperiorNombre?: string;
+  @IsInt({ message: 'La división superior debe ser un número entero' })
+  @Min(1, { message: 'El ID de la división superior debe ser positivo' })
+  divisionSuperiorId?: number;
 
   @IsOptional()
   @IsString()
