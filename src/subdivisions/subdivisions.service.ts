@@ -28,7 +28,6 @@ export class SubdivisionsService {
   ): Promise<Subdivision> {
     const { nombre, embajadorNombre } = createSubdivisionDto;
 
-    // Verificar que la división existe
     const division = await this.divisionRepository.findOne({
       where: { id: divisionId },
     });
@@ -46,7 +45,6 @@ export class SubdivisionsService {
       throw new ConflictException('Ya existe una subdivisión con ese nombre');
     }
 
-    // Generar valores aleatorios para nivel y cantidad de colaboradores
     const nivel = generateRandomLevel();
     const cantidadColaboradores = generateRandomCollaborators();
 

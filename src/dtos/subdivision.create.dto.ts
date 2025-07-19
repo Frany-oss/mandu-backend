@@ -1,35 +1,19 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-import {
-  IsString,
-  IsOptional,
-  Length,
-  IsInt,
-  IsPositive,
-} from 'class-validator';
+import { IsString, IsOptional, IsInt, MaxLength, Min } from 'class-validator';
 
 export class CreateSubdivisionDto {
-  @IsOptional()
   @IsString()
-  @Length(1, 45)
-  nombre?: string;
+  @MaxLength(45, { message: 'El nombre no puede superar los 45 caracteres' })
+  nombre: string;
 
   @IsOptional()
-  @IsInt()
-  @IsPositive()
+  @IsInt({ message: 'La división superior debe ser un número entero' })
+  @Min(1, { message: 'El ID de la división superior debe ser positivo' })
   divisionId?: number;
 
   @IsOptional()
-  @IsInt()
-  @IsPositive()
-  nivel?: number;
-
-  @IsOptional()
-  @IsInt()
-  @IsPositive()
-  cantidadColaboradores?: number;
-
-  @IsOptional()
   @IsString()
-  @Length(1, 100)
+  @MaxLength(100, {
+    message: 'El nombre del embajador no puede superar los 100 caracteres',
+  })
   embajadorNombre?: string;
 }

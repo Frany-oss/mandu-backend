@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import {
   Body,
   Controller,
@@ -27,7 +26,8 @@ export class DivisionsController {
     description: 'Ya existe una división con ese nombre',
   })
   async create(@Body() createDivisionDto: CreateDivisionDto) {
-    return await this.divisionService.create(createDivisionDto);
+    const data = await this.divisionService.create(createDivisionDto);
+    return data;
   }
 
   @Get()

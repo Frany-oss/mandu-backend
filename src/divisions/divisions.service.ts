@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Injectable,
   BadRequestException,
@@ -25,35 +27,43 @@ export class DivisionsService {
   async create(createDivisionDto: CreateDivisionDto): Promise<Division> {
     const { nombre, divisionSuperiorId, embajadorNombre } = createDivisionDto;
 
-    // Verificar que el nombre sea único
-    const existingDivision = await this.divisionRepository.findOne({
-      where: { nombre },
-    });
+    const queries: Promise<any>[] = [
+      // Verificar que el nombre sea único
+      this.divisionRepository.findOne({
+        where: { nombre },
+        select: ['id'],
+      }),
+    ];
 
+    // Agregar consulta de división superior solo si es necesaria
+    if (divisionSuperiorId) {
+      queries.push(
+        this.divisionRepository.findOne({
+          where: { id: divisionSuperiorId },
+          select: ['id', 'nombre'],
+        }),
+      );
+    }
+
+    // Ejecutar todas las consultas en paralelo
+    const [existingDivision, divisionSuperior] = await Promise.all(queries);
+
+    // Validaciones
     if (existingDivision) {
       throw new ConflictException('Ya existe una división con ese nombre');
     }
 
-    let divisionSuperior: Division | null = null;
-    let divisionSuperiorNombre: string | null = null;
-
-    // Si se especifica una división superior, verificar que existe
-    if (divisionSuperiorId) {
-      divisionSuperior = await this.divisionRepository.findOne({
-        where: { id: divisionSuperiorId },
-      });
-
-      if (!divisionSuperior) {
-        throw new NotFoundException(
-          'La división superior especificada no existe',
-        );
-      }
-      divisionSuperiorNombre = divisionSuperior.nombre;
+    if (divisionSuperiorId && !divisionSuperior) {
+      throw new NotFoundException(
+        'La división superior especificada no existe',
+      );
     }
 
-    // Generar valores aleatorios para nivel y cantidad de colaboradores
-    const nivel = generateRandomLevel();
-    const cantidadColaboradores = generateRandomCollaborators();
+    // Generar valores aleatorios una sola vez
+    const [nivel, cantidadColaboradores] = [
+      generateRandomLevel(),
+      generateRandomCollaborators(),
+    ];
 
     const division = this.divisionRepository.create({
       nombre,
@@ -61,7 +71,7 @@ export class DivisionsService {
       nivel,
       cantidadColaboradores,
       embajadorNombre: embajadorNombre || null,
-      divisionSuperiorNombre: divisionSuperiorNombre,
+      divisionSuperiorNombre: divisionSuperior?.nombre || null,
     });
 
     return await this.divisionRepository.save(division);
@@ -168,10 +178,6 @@ export class DivisionsService {
         'No se puede eliminar una división que tiene subdivisiones. Elimine o reasigne las subdivisiones primero.',
       );
     }
-
-    // TODO: Si es una division superior que no deje eliminar
-
-    // TODO: Eliminar todas las subdivisiones
 
     await this.divisionRepository.remove(division);
   }
