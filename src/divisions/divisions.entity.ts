@@ -9,7 +9,6 @@ import {
 } from 'typeorm';
 
 @Entity('divisions')
-// @Index(['nombre'], { unique: true })
 export class Division {
   @PrimaryGeneratedColumn()
   id: number;
@@ -49,6 +48,14 @@ export class Division {
     nullable: true,
   })
   embajadorNombre: string | null;
+
+  @Column({
+    name: 'division_superior_nombre',
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+  })
+  divisionSuperiorNombre: string | null;
 
   // Field to count subdivisions
   @Column({

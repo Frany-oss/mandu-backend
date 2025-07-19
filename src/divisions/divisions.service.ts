@@ -9,7 +9,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Division } from './divisions.entity';
-import { CreateDivisionDto } from 'src/dtos/divisiones.create.dto';
+import { CreateDivisionDto } from 'src/dtos/divisions.create.dto';
 import { UpdateDivisionDto } from 'src/dtos/divisions.update.dto';
 import {
   generateRandomCollaborators,
@@ -36,9 +36,12 @@ export class DivisionsService {
       throw new ConflictException('Ya existe una división con ese nombre');
     }
 
+    let divisionSuperior: Division | null = null;
+    let divisionSuperiorNombre: string | null = null;
+
     // Si se especifica una división superior, verificar que existe
     if (divisionSuperiorId) {
-      const divisionSuperior = await this.divisionRepository.findOne({
+      divisionSuperior = await this.divisionRepository.findOne({
         where: { id: divisionSuperiorId },
       });
 
@@ -47,6 +50,7 @@ export class DivisionsService {
           'La división superior especificada no existe',
         );
       }
+      divisionSuperiorNombre = divisionSuperior.nombre;
     }
 
     // Generar valores aleatorios para nivel y cantidad de colaboradores
@@ -59,6 +63,7 @@ export class DivisionsService {
       nivel,
       cantidadColaboradores,
       embajadorNombre: embajadorNombre || null,
+      divisionSuperiorNombre: divisionSuperiorNombre,
     });
 
     return await this.divisionRepository.save(division);

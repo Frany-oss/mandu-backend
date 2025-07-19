@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { DivisionsService } from './divisions.service';
-import { CreateDivisionDto } from 'src/dtos/divisiones.create.dto';
+import { CreateDivisionDto } from 'src/dtos/divisions.create.dto';
 import { UpdateDivisionDto } from 'src/dtos/divisions.update.dto';
 
 @Controller('divisions')
