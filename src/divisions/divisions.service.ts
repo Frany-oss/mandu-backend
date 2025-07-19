@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Injectable,
   BadRequestException,
@@ -25,7 +23,8 @@ export class DivisionsService {
   ) {}
 
   async create(createDivisionDto: CreateDivisionDto): Promise<Division> {
-    const { nombre, divisionSuperiorId, embajadorNombre } = createDivisionDto;
+    const { nombre, divisionSuperiorNombre, embajadorNombre } =
+      createDivisionDto;
 
     // Verificar que el nombre sea único
     const existingDivision = await this.divisionRepository.findOne({
@@ -37,12 +36,12 @@ export class DivisionsService {
     }
 
     let divisionSuperior: Division | null = null;
-    let divisionSuperiorNombre: string | null = null;
+    let divisionSuperiorId: number | null = null;
 
     // Si se especifica una división superior, verificar que existe
-    if (divisionSuperiorId) {
+    if (divisionSuperiorNombre) {
       divisionSuperior = await this.divisionRepository.findOne({
-        where: { id: divisionSuperiorId },
+        where: { nombre: divisionSuperiorNombre },
       });
 
       if (!divisionSuperior) {
@@ -50,7 +49,7 @@ export class DivisionsService {
           'La división superior especificada no existe',
         );
       }
-      divisionSuperiorNombre = divisionSuperior.nombre;
+      divisionSuperiorId = divisionSuperior.id;
     }
 
     // Generar valores aleatorios para nivel y cantidad de colaboradores
@@ -125,39 +124,6 @@ export class DivisionsService {
       }
     }
 
-    // Si se actualiza la división superior, verificar que existe y no crea ciclos
-    if (updateDivisionDto.divisionSuperiorId !== undefined) {
-      if (updateDivisionDto.divisionSuperiorId === id) {
-        throw new BadRequestException(
-          'Una división no puede ser su propia división superior',
-        );
-      }
-
-      if (updateDivisionDto.divisionSuperiorId) {
-        const divisionSuperior = await this.divisionRepository.findOne({
-          where: { id: updateDivisionDto.divisionSuperiorId },
-        });
-
-        if (!divisionSuperior) {
-          throw new NotFoundException(
-            'La división superior especificada no existe',
-          );
-        }
-
-        // Verificar que no se cree un ciclo
-        const wouldCreateCycle = await this.wouldCreateCycle(
-          id,
-          updateDivisionDto.divisionSuperiorId,
-        );
-
-        if (wouldCreateCycle) {
-          throw new BadRequestException(
-            'La asignación crearía un ciclo en la jerarquía',
-          );
-        }
-      }
-    }
-
     Object.assign(division, updateDivisionDto);
     return await this.divisionRepository.save(division);
   }
@@ -171,7 +137,9 @@ export class DivisionsService {
       );
     }
 
-    // TODO: Eliminate all subdivisions if exist
+    // TODO: Si es una division superior que no deje eliminarla
+
+    // TODO: Eliminar todas las subdivisiones
 
     await this.divisionRepository.remove(division);
   }
