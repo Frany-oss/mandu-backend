@@ -1,4 +1,4 @@
-import { Subdivision } from 'src/subdivisions/subdivisions.entity';
+import { Subdivision } from 'src/components/subdivisions/subdivisions.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,

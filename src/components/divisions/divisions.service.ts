@@ -15,7 +15,7 @@ import {
   generateRandomCollaborators,
   generateRandomLevel,
 } from 'src/shared/global.functions';
-import { Subdivision } from 'src/subdivisions/subdivisions.entity';
+import { Subdivision } from 'src/components/subdivisions/subdivisions.entity';
 
 @Injectable()
 export class DivisionsService {

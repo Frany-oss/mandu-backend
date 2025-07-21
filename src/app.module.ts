@@ -4,8 +4,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { DivisionsModule } from './divisions/divisions.module';
-import { SubdivisionsModule } from './subdivisions/subdivisions.module';
+import { DivisionsModule } from './components/divisions/divisions.module';
+import { SubdivisionsModule } from './components/subdivisions/subdivisions.module';
 
 @Module({
   imports: [

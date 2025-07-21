@@ -1,4 +1,4 @@
-import { Division } from 'src/divisions/divisions.entity';
+import { Division } from 'src/components/divisions/divisions.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,

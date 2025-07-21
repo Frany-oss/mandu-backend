@@ -3,7 +3,7 @@ import { DivisionsController } from './divisions.controller';
 import { DivisionsService } from './divisions.service';
 import { Division } from './divisions.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Subdivision } from 'src/subdivisions/subdivisions.entity';
+import { Subdivision } from 'src/components/subdivisions/subdivisions.entity';
 
 @Module({
   imports: [

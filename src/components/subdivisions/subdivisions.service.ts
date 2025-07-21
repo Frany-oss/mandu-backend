@@ -10,7 +10,7 @@ import {
   generateRandomCollaborators,
   generateRandomLevel,
 } from 'src/shared/global.functions';
-import { Division } from 'src/divisions/divisions.entity';
+import { Division } from 'src/components/divisions/divisions.entity';
 import { CreateSubdivisionDto } from 'src/dtos/subdivision.create.dto';
 
 @Injectable()
